@@ -16,3 +16,10 @@ most Unix-like operating system.
 ```jq
 [inputs] | [(join(",") / ",,")[] / "," | map(tonumber) | add] | sort[-3:] | last, add
 ```
+
+## [🖿 02](02) solving [Day 2: Rock Paper Scissors](https://adventofcode.com/2022/day/2)
+`jq -Rnf solve.jq input.txt`
+```jq
+[inputs | [explode[0,2] % 4]] | ., map(last = (add + 1) % 3)
+| map(last + 1 + (last - first + 5) % 3 * 3) | add
+```
