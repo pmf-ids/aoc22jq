@@ -23,3 +23,10 @@ most Unix-like operating system.
 [inputs | [explode[0,2] % 4]] | ., map(last = (add + 1) % 3)
 | map(last + 1 + (last - first + 5) % 3 * 3) | add
 ```
+
+## [🖿 03](03) solving [Day 3: Rucksack Reorganization](https://adventofcode.com/2022/day/3)
+`jq -Rnf solve.jq input.txt`
+```jq
+[inputs | [(explode[] - 38) % 58]] | map([_nwise(length / 2)]), [_nwise(3)]
+| map(until(length < 2; .[:2] |= [first - (first - last)]) | first | first) | add
+```
