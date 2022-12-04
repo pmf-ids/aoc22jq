@@ -30,3 +30,10 @@ most Unix-like operating system.
 [inputs | [(explode[] - 38) % 58]] | map([_nwise(length / 2)]), [_nwise(3)]
 | map(until(length < 2; .[:2] |= [first - (first - last)]) | first | first) | add
 ```
+
+## [🖿 04](04) solving [Day 4: Camp Cleanup](https://adventofcode.com/2022/day/4)
+`jq -Rnf solve.jq input.txt`
+```jq
+[inputs | [scan("\\d+") | tonumber]] | ., map([.[0,1,3,2]])
+| map(select((.[0] - .[2]) * (.[1] - .[3]) <= 0)) | length
+```
