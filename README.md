@@ -37,3 +37,14 @@ most Unix-like operating system.
 [inputs | [scan("\\d+") | tonumber]] | ., map([.[0,1,3,2]])
 | map(select((.[0] - .[2]) * (.[1] - .[3]) <= 0)) | length
 ```
+
+## [🖿 05](05) solving [Day 5: Supply Stacks](https://adventofcode.com/2022/day/5)
+`jq -Rnrf solve.jq input.txt`
+```jq
+[inputs] | index("") as $p | (false, true) as $cm9001
+| reduce (.[$p+1:][] | [scan("\\d+") | tonumber]) as [$n, $from, $to] (
+    .[:$p-1] | map([" ", _nwise(4)[1:2]]) | transpose | map(map(select(. != " ")));
+    .[$to] = (.[$from][:$n] | select($cm9001) // reverse) + .[$to] | .[$from] |= .[$n:]
+  )
+| map(first) | add
+```
