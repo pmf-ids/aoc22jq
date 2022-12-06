@@ -48,3 +48,9 @@ most Unix-like operating system.
   )
 | map(first) | add
 ```
+
+## [🖿 06](06) solving [Day 6: Tuning Trouble](https://adventofcode.com/2022/day/6)
+`jq -Rf solve.jq input.txt`
+```jq
+. / "" | (4,14) as $n | [while(.[:$n] | any(indices(.[]); .[1]); .[1:])] | $n + length
+```
