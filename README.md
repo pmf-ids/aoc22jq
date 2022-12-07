@@ -54,3 +54,16 @@ most Unix-like operating system.
 ```jq
 . / "" | (4,14) as $n | [while(.[:$n] | any(indices(.[]); .[1]); .[1:])] | $n + length
 ```
+
+## [🖿 07](07) solving [Day 7: No Space Left On Device](https://adventofcode.com/2022/day/7)
+`jq -Rnf solve.jq input.txt`
+```jq
+reduce (inputs | capture("^(\\$ cd (?<cd>.*)|(?<size>\\d+) (?<file>.*))$"))
+  as {$cd, $file, $size} ({};
+    if $file then setpath(."" + [$file]; $size | tonumber)
+    else ."" |= if $cd == "/" then [] elif $cd == ".." then .[:-1] else . + [$cd] end
+    end
+  )
+| [.. | objects | [.. | numbers] | add] | (max - 40000000) as $th
+| (map(select(. <= 100000)) | add), (map(select(. >= $th)) | min)
+```
