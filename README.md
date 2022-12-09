@@ -67,3 +67,16 @@ reduce (inputs | capture("^(\\$ cd (?<cd>.*)|(?<size>\\d+) (?<file>.*))$"))
 | [.. | objects | [.. | numbers] | add] | (max - 40000000) as $th
 | (map(select(. <= 100000)) | add), (map(select(. >= $th)) | min)
 ```
+
+## [🖿 08](08) solving [Day 8: Treetop Tree House](https://adventofcode.com/2022/day/8)
+`jq -Rnf solve.jq input.txt`
+```jq
+[inputs / "" | map(tonumber)] | [., transpose | [., map(reverse) | map(
+  reduce to_entries[] as {$key, $value} ([[]];
+    first[$value:] as $last | first[$value] = $key
+    | .[1][$key] = $last == [] | .[2][$key] = $key - ($last | max // 0)
+  ) | .[1:] | transpose
+)] | last[] |= reverse] | last[] |= transpose | map(.[] | map(.[])) | transpose
+
+| (map(select(any(first))) | length), (map(reduce .[][1] as $p (1; . * $p)) | max)
+```
