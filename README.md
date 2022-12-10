@@ -80,3 +80,11 @@ reduce (inputs | capture("^(\\$ cd (?<cd>.*)|(?<size>\\d+) (?<file>.*))$"))
 
 | (map(select(any(first))) | length), (map(reduce .[][1] as $p (1; . * $p)) | max)
 ```
+
+## [🖿 10](10) solving [Day 10: Cathode-Ray Tube](https://adventofcode.com/2022/day/10)
+`jq -Rnrf solve.jq input.txt`
+```jq
+reduce ((inputs / " ")[] | tonumber? // 0) as $p ([1]; . + [last + $p]) | to_entries
+| ([(20,60,100,140,180,220) as $p | $p * .[$p - 1].value] | add),
+  (map(if .key % 40 - .value | 1 >= fabs then "#" else " " end)[:-1] | _nwise(40) | add)
+```
