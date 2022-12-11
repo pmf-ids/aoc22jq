@@ -81,6 +81,24 @@ reduce (inputs | capture("^(\\$ cd (?<cd>.*)|(?<size>\\d+) (?<file>.*))$"))
 | (map(select(any(first))) | length), (map(reduce .[][1] as $p (1; . * $p)) | max)
 ```
 
+## [🖿 09](09) solving [Day 9: Rope Bridge](https://adventofcode.com/2022/day/9)
+`jq -Rnf solve.jq input.txt`
+```jq
+[inputs / " " | map(tonumber? // (explode[] | .%19, drem(.-2; 7) | .%2))] | [2,10] as $kn
+| reduce .[] as [$axis, $step, $dist] ([[range($kn | max) | [0,0]], ($kn | map({}))];
+    reduce range($dist) as $_ (.;
+      first |= ([(first | .[$axis] += $step), .[1:]] | until(last == [];
+        (.[-2:] | last |= first | transpose) as $comp | .[-1:] |= map(
+          if $comp | any(first - last | fabs > 1)
+          then ($comp | map(first - ((first - last) / 2 | rint))), .[1:]
+          else .[], [] end
+        ))[:-1])
+      | reduce ($kn | keys[]) as $k (.; last[$k][first[$kn[$k] - 1] | @text] = 1)
+    )
+  )
+| last[] | length
+```
+
 ## [🖿 10](10) solving [Day 10: Cathode-Ray Tube](https://adventofcode.com/2022/day/10)
 `jq -Rnrf solve.jq input.txt`
 ```jq
