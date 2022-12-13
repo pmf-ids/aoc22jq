@@ -106,3 +106,17 @@ reduce ((inputs / " ")[] | tonumber? // 0) as $p ([1]; . + [last + $p]) | to_ent
 | ([(20,60,100,140,180,220) as $p | $p * .[$p - 1].value] | add),
   (map(if .key % 40 - .value | 1 >= fabs then "#" else " " end)[:-1] | _nwise(40) | add)
 ```
+
+## [🖿 12](12) solving [Day 12: Hill Climbing Algorithm](https://adventofcode.com/2022/day/12)
+`jq -Rnf solve.jq input.txt`
+```jq
+[inputs | explode] | (first | length) as $w
+| add | [indices(83, 97, 69)] as [[$s], $a, $q]
+| {d: 0, m: map(-. % 96 % 82 % 43), $q}
+
+| until(.m[$s] >= 0; {d: (.d + 1), m: (.m[.q[]] = .d).m, q: [.q[] as $q | (
+    $q | . - $w, select(. % $w > 0) - 1, select(. % $w < $w - 1) + 1, . + $w
+  ) as $n | select(.m | has($n) and .[$n] <= .[$q] + 1) | $n] | unique})
+
+| [.m[$s, $a[]] | select(. >= 0)] | first, min
+```
