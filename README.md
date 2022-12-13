@@ -120,3 +120,10 @@ reduce ((inputs / " ")[] | tonumber? // 0) as $p ([1]; . + [last + $p]) | to_ent
 
 | [.m[$s, $a[]] | select(. >= 0)] | first, min
 ```
+
+## [🖿 13](13) solving [Day 13: Distress Signal](https://adventofcode.com/2022/day/13)
+`jq -sf solve.jq input.txt`
+```jq
+[[[2]], [[6]]] + . | map([tostream | (last | numbers), (first | -1 / (length + 1))])
+| ([_nwise(2) | first < last][[true]] | add), ([sort[.[0,1] | [.]][] + 1] | first * last)
+```
