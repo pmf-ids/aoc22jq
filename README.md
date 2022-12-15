@@ -127,3 +127,18 @@ reduce ((inputs / " ")[] | tonumber? // 0) as $p ([1]; . + [last + $p]) | to_ent
 [[[2]], [[6]]] + . | map([tostream | (last | numbers), (first | -1 / (length + 1))])
 | ([_nwise(2) | first < last][[true]] | add), ([sort[.[0,1] | [.]][] + 1] | first * last)
 ```
+
+## [🖿 14](14) solving [Day 14: Regolith Reservoir](https://adventofcode.com/2022/day/14)
+`jq -Rnf solve.jq input.txt`
+```jq
+[inputs / "->" | map(. / "," | map(tonumber))] | ([.[][][1]] | max + 2) as $s
+| map(while(has(1); .[1:])[:2] | transpose | map([range(min; max + 1)]))
+
+| reduce ($s, 0) as $p (
+    {q: [$s], m: (reduce .[] as [$x, $y] ([]; .[$y[]][$x[] + $s - 500] = 0))};
+    until(.q | length == $p; . as {$q, $m} | ($q | length) as $y
+      | [$q[-1] + (0, -1, 1) | select($y >= $s or $m[$y][.] | not)] as [$x]
+      | if $x then .q += [$x] else .m[$y - 1][$q[-1]] = 1 | .q |= .[:-1] end
+    ) | .s += [[.m[] | arrays[]] | add]
+  ) | .s[]
+```
