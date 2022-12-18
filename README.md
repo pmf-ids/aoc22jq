@@ -142,3 +142,14 @@ reduce ((inputs / " ")[] | tonumber? // 0) as $p ([1]; . + [last + $p]) | to_ent
     ) | .s += [[.m[] | arrays[]] | add]
   ) | .s[]
 ```
+
+## [🖿 18](18) solving [Day 18: Boiling Boulders](https://adventofcode.com/2022/day/18)
+`jq -Rsf solve.jq input.txt`
+```jq
+def pump: map(keys[] as $dim | .[$dim] += (-1,1));
+
+[scan("\\d+") | tonumber] | [.[] - min + 1] | (max + 1) as $box
+| [[_nwise(3)] | ., pump, [[0,0,0]]] | [.[1] - (., until(last == []; last = (
+    last | pump | [unique[] | select(all(0 <= . and . <= $box))]
+  ) - first | first += last) | first)] | first, first - last | length
+```
