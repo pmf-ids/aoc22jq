@@ -190,3 +190,10 @@ def yell($m):
     ); .min + 1)
   ] | first, last
 ```
+
+## [🖿 25](25) solving [Day 25: Full of Hot Air](https://adventofcode.com/2022/day/25)
+`jq -Rnrf solve.jq input.txt`
+```jq
+[inputs | reduce drem(-9 * explode[]; 123) as $p (0; . * 5 + $p % 5)] | add
+| ["012=-"[[drem(while(. > 1; ./5 | rint) % 5; 5)] | reverse[]:][:1]] | add
+```
