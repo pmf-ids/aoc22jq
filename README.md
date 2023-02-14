@@ -107,6 +107,26 @@ reduce ((inputs / " ")[] | tonumber? // 0) as $p ([1]; . + [last + $p]) | to_ent
   (map(if .key % 40 - .value | 1 >= fabs then "#" else " " end)[:-1] | _nwise(40) | add)
 ```
 
+## [🖿 11](11) solving [Day 11: Monkey in the Middle](https://adventofcode.com/2022/day/11)
+`jq -Rnf solve.jq input.txt`
+```jq
+[inputs]
+| reduce (_nwise(7) | map([scan("\\+|\\*"), (scan("\\d+|true|false") | fromjson)]))
+  as [[$mid], $list, [$iop, $val], [$div], [$b1, $m1], [$b2, $m2]] ([];
+    .[$mid] = {$mid, $list, $iop, $val, $div, ("\($b1)"): $m1, ("\($b2)"): $m2}
+  )
+ 
+| ([20, "/", 3], [10000, "%", reduce .[].div as $div (1; . * $div)]) as [$dur, $rop, $rel]
+| nth($dur; recurse(reduce .[].mid as $m (.;
+    reduce .[$m].list[] as $old (.[$m] |= (.act += (.list | length) | .list = []); (.[$m]
+      | if .iop == "*" then $old * (.val // $old) else $old + (.val // $old) end
+      | if $rop == "/" then . / $rel | floor else . % $rel end
+    ) as $new | .[.[$m] | .["\($new % .div == 0)"]].list += [$new])
+  )))
+
+| map(.act) | sort | .[-1] * .[-2]
+```
+
 ## [🖿 12](12) solving [Day 12: Hill Climbing Algorithm](https://adventofcode.com/2022/day/12)
 `jq -Rnf solve.jq input.txt`
 ```jq
